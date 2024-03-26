@@ -67,9 +67,7 @@ const CarBooking = () => {
           return response.json();
         })
         .then((data) => {
-          // Process distance data
           console.log("Distance data:", data);
-          // Update the distance state based on the received data
           setDistance(data.routes[0].distance);
         })
         .catch((error) => {
@@ -81,7 +79,6 @@ const CarBooking = () => {
   };
 
   const fetchCarOptions = () => {
-    // For simplicity, let's assume car options are fetched based on dummy data
     const dummyCars = [
       {
         name: "UberX",
@@ -152,7 +149,6 @@ const CarBooking = () => {
       });
   };
 
-  // Function to smoothly scroll to a specific reference
   const scrollSmoothly = (ref) => {
     if (ref.current) {
       ref.current.scrollIntoView({
@@ -162,17 +158,6 @@ const CarBooking = () => {
     }
   };
 
-  // Reset form and states
-  const resetForm = () => {
-    setPickupAddress("");
-    setDropoffAddress("");
-    setDistance(null);
-    setCars([]);
-    setSelectedCar(null);
-    setIsBookingConfirmed(false);
-  };
-
-  // Render confirmation page if booking is confirmed
   if (isBookingConfirmed) {
     return (
       <div className="car-booking-container">
