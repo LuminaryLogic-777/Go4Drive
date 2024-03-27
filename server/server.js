@@ -17,8 +17,7 @@ const corsOptions = {
 }
 app.use(cors(corsOptions));
 
-// MongoDB connection
-mongoose.connect('mongodb://localhost/booking-system', { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.DB_CONNECTION_PATH||'mongodb://localhost/booking-system', { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Failed to connect to MongoDB', err));
 
@@ -28,5 +27,4 @@ app.use('/api/users', userRoutes);
 app.use('/api/getUsers', userRoutes);
 app.use('/api/coordinates',coordinates);
 
-// Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

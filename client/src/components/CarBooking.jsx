@@ -1,5 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./CarBooking.css"; 
+import image1 from "../images/1.jpg";
+import image2 from "../images/2.jpg";
+import image3 from "../images/3.jpg";
+import image4 from "../images/4.jpg";
+import image5 from "../images/5.jpg";
+import "./CarBooking.css";
 const CarBooking = () => {
   const [pickupAddress, setPickupAddress] = useState("");
   const [dropoffAddress, setDropoffAddress] = useState("");
@@ -11,6 +16,8 @@ const CarBooking = () => {
   const [dropoffCoordinates, setDropoffCoordinates] = useState(null);
   const [userName, setUserName] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   const carOptionsRef = useRef(null);
   const bookNowRef = useRef(null);
@@ -20,7 +27,6 @@ const CarBooking = () => {
     scrollSmoothly(carOptionsRef);
     calculateDistance();
     fetchCarOptions();
-    
   };
   const handleConfirmBooking = (e) => {
     e.preventDefault();
@@ -57,6 +63,7 @@ const CarBooking = () => {
   };
 
   const calculateDistance = (pickupCoordinates, dropoffCoordinates) => {
+    setIsLoading(true);
     if (pickupCoordinates && dropoffCoordinates) {
       const url = `https://router.project-osrm.org/route/v1/driving/${pickupCoordinates.longitude},${pickupCoordinates.latitude};${dropoffCoordinates.longitude},${dropoffCoordinates.latitude}?overview=false`;
       fetch(url)
@@ -69,11 +76,14 @@ const CarBooking = () => {
         .then((data) => {
           console.log("Distance data:", data);
           setDistance(data.routes[0].distance);
+          setIsLoading(false);
         })
         .catch((error) => {
+          setIsLoading(false);
           console.error("Error calculating distance:", error);
         });
     } else {
+      setIsLoading(false);
       console.error("Coordinates are not available.");
     }
   };
@@ -81,29 +91,29 @@ const CarBooking = () => {
   const fetchCarOptions = () => {
     const dummyCars = [
       {
-        name: "UberX",
-        price: "$20",
-        imageUrl: "https://via.placeholder.com/100",
+        name: "Go4DriveX",
+        price: "₹200",
+        imageUrl: image1,
       },
       {
-        name: "UberXL",
-        price: "$30",
-        imageUrl: "https://via.placeholder.com/100",
+        name: "Go4DriveXL",
+        price: "₹300",
+        imageUrl: image2,
       },
       {
-        name: "Uber Black",
-        price: "$40",
-        imageUrl: "https://via.placeholder.com/100",
+        name: "Go4Drive Black",
+        price: "₹400",
+        imageUrl: image3,
       },
       {
-        name: "Uber Lux",
-        price: "$50",
-        imageUrl: "https://via.placeholder.com/100",
+        name: "Go4Drive Lux",
+        price: "₹500",
+        imageUrl: image4,
       },
       {
-        name: "Uber Pool",
-        price: "$15",
-        imageUrl: "https://via.placeholder.com/100",
+        name: "Go4Drive Pool",
+        price: "₹150",
+        imageUrl: image5,
       },
     ];
     setCars(dummyCars);
@@ -161,15 +171,16 @@ const CarBooking = () => {
   if (isBookingConfirmed) {
     return (
       <div className="car-booking-container">
+        <h1 className="title">Name: {userName}</h1>
         <h1 className="title">Booking Confirmed!</h1>
-        <p>Your ride with {selectedCar.name} has been successfully booked.</p>
+        <p>Your ride with <b>{selectedCar.name}</b> has been successfully booked.</p>
       </div>
     );
   }
 
   return (
     <div className="car-booking-container">
-      <h1 className="navbar-title">Go4Drive</h1> 
+      <h1 className="navbar-title">Go4Drive</h1>
       <form onSubmit={handleSubmit} className="form">
         <div className="form-group">
           <label className="label">Pickup Location</label>
@@ -201,12 +212,17 @@ const CarBooking = () => {
           Find a Ride
         </button>
       </form>
+      {isLoading ? (
+        <div className="loader">Loading...</div>
+    ) : (
+      <>
       {distance !== null && (
         <div>
           {cars.length > 0 && (
             <div ref={carOptionsRef} className="car-options">
               <p className="distance-info">
-                Estimated Distance: {(distance / 1000).toFixed(2)} Kilometer
+                Estimated Distance: <b>{(distance / 1000).toFixed(2)}{" "}Km</b>
+                
               </p>
 
               <h2 className="options-title">Available Cars</h2>
@@ -233,6 +249,8 @@ const CarBooking = () => {
           )}
         </div>
       )}
+      </>
+    )}
       {selectedCar && (
         <div ref={bookNowRef} className="confirmation-container">
           <h2>Confirm Booking</h2>
